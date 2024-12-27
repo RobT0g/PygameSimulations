@@ -1,0 +1,33 @@
+import pygame
+from pygame.locals import *
+
+pygame.init()
+
+# Setting screen size
+pixel_size = 32
+screen_width = 30*pixel_size
+screen_height = 16*pixel_size
+display = pygame.display.set_mode((screen_width, screen_height))
+pygame.display.set_caption('Simulation Example')  
+
+# Creating ball
+ball = pygame.Surface((pixel_size, pixel_size))
+pygame.draw.circle(ball, (255, 255, 255), (pixel_size//2, pixel_size//2), pixel_size//2)
+
+# Main Loop
+running = True
+while running:
+    for e in pygame.event.get():
+        if e.type == QUIT or (e.type == KEYDOWN and e.key == K_ESCAPE):
+            pygame.quit()
+            running = False
+            break
+        
+        elif e.type == pygame.MOUSEBUTTONDOWN and pygame.mouse.get_pressed()[0]:
+            display.blit(ball, [i-pixel_size//2 for i in pygame.mouse.get_pos()])
+            
+        elif e.type == pygame.MOUSEBUTTONDOWN and pygame.mouse.get_pressed()[2]:
+            pygame.display.flip()
+            display.fill((0, 0, 0))
+
+        
