@@ -1,11 +1,8 @@
 import pygame
 from pygame.locals import *
+import math
 
 pygame.init()
-
-# Starting Position and Speed
-starting_pos = [300, 200]
-starting_speed = [5, -10]
 
 # Setting screen size
 pixel_size = 32
@@ -30,8 +27,10 @@ pygame.time.set_timer(update, refresh)
 # Creating ball
 ball = pygame.Surface((pixel_size, pixel_size), pygame.SRCALPHA)
 pygame.draw.circle(ball, (255, 255, 255), (pixel_size//2, pixel_size//2), pixel_size//2)
+starting_pos = [20, 50]
 current_pos = starting_pos[:]
-speed = starting_speed[:]
+current_time = 0
+speed = [0, 0]
 
 # Creating Gravity
 gravity_accel = 10 # m/s^2
@@ -44,6 +43,11 @@ def update_variables():
     if paused:
         return
     
+    global current_pos, current_time, speed
+
+    # Incrementing time
+    current_time += timeStep
+
     # Updating ball position
     current_pos[0] += speed[0]
     current_pos[1] += speed[1]
@@ -51,6 +55,13 @@ def update_variables():
     # Updating speed
     speed[0] += gravity[0]*timeStep/1000
     speed[1] += gravity[1]*timeStep/1000
+
+def check_collision():
+    if current_pos[1] + ball.get_size()[1] < ground_level:
+        return
+    
+    current_pos[1] = ground_level - ball.get_size()[1]
+    speed[1] = -math.sqrt(2*gravity_accel*(ground_level - starting_pos[1] - ball.get_size()[1]))
 
 # Main Loop
 running = True
@@ -63,7 +74,8 @@ while running:
 
         elif e.type == pygame.MOUSEBUTTONDOWN and pygame.mouse.get_pressed()[0]:
             current_pos = starting_pos[:]
-            speed = starting_speed[:]
+            current_time = 0
+            speed = [0, 0]
             paused = not paused
 
         elif e.type == update:
@@ -72,4 +84,5 @@ while running:
             pygame.display.flip()
             
             update_variables()
+            check_collision()
 
