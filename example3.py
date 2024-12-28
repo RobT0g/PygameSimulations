@@ -4,11 +4,13 @@ import math
 
 pygame.init()
 
-# Starting Position, Speed and Gravity
+# Customizable Parameters
 starting_pos = [300, 200]
-starting_speed = [5, -10]
+starting_speed = [-30, -10]
 gravity_accel = 10
 ground_level = 32
+timeStep = 200
+elasticity_coeficient = 40
 
 # Setting screen size
 pixel_size = 32
@@ -25,7 +27,6 @@ pygame.draw.rect(frame, (0, 255, 0), (0, ground_level, screen_width, pixel_size)
 
 # Setting refresh rate
 refresh = 25
-timeStep = 150
 clock = pygame.time.Clock() 
 update = pygame.USEREVENT + 1
 pygame.time.set_timer(update, refresh)
@@ -40,41 +41,56 @@ velocity_initial = starting_speed[:]
 current_pos = starting_pos[:]
 current_speed = starting_speed[:]
 current_time = 0
-time_modifier = [0, 0]
+time_modifier = 0
+collision_time = 0
 
 # Pause Variable
 paused = True
 
 def update_variables():
-    global current_pos, current_time, speed, paused
+    global current_pos, current_time, current_pos, current_speed, space_initial, velocity_initial, paused, time_modifier, collision_time
 
     if paused:
         return
 
     # Incrementing time
     current_time += timeStep
-    formula_time = [(current_time - i)/1000 for i in time_modifier]
-    if current_time/1000 >= 12.84: paused = True
+    formula_time = (current_time - time_modifier)/1000
+
+    # Checking collisions
+    if formula_time >= collision_time and collision_time >= 0.5:
+        #print('Collided!')
+        time_modifier = time_modifier + collision_time*1000
+        formula_time = (current_time - time_modifier)/1000
+
+        space_initial[0] = space_initial[0] + velocity_initial[0]*collision_time
+        velocity_initial[0] = (1-elasticity_coeficient/100) * velocity_initial[0]
+
+        space_initial[1] = ground_level-ball.get_size()[1]
+        velocity_initial[1] = (-1+elasticity_coeficient/100)*(velocity_initial[1] + gravity_accel*collision_time)
 
     # Updating ball position
-    current_pos[0] = space_initial[0] + velocity_initial[0]*formula_time[0]
-    current_pos[1] = space_initial[1] + velocity_initial[1]*formula_time[1] + (gravity_accel*(formula_time[1]**2))/2
+    if collision_time <= 0.5:
+        current_pos[1] = ground_level-ball.get_size()[0]
+    else:
+        current_pos[1] = space_initial[1] + velocity_initial[1]*formula_time + (gravity_accel*(formula_time**2))/2
+        current_pos[0] = (space_initial[0] + velocity_initial[0]*formula_time)%screen_width
+
+    print([f'{i:.3f}' for i in [*current_pos, formula_time, current_time]])
 
     # Updating speed values
-    current_speed[1] = velocity_initial[1] + gravity_accel*formula_time[1]
+    current_speed[1] = velocity_initial[1] + gravity_accel*formula_time
+    check_collision_at_y_axis()
 
 def check_collision_at_y_axis():
-    # if current_pos[1] + ball.get_size()[1] < ground_level:
-    #     return
-    
+    global space_initial, velocity_initial, paused, time_modifier, collision_time
+
     delta = (4*velocity_initial[1]**2) - 4 * gravity_accel * (2*space_initial[1] - 2*ground_level + 2*ball.get_size()[1])
     collision_time = (-2*velocity_initial[1] + math.sqrt(delta))/(2*gravity_accel)
-    print(collision_time)
 
-    # velocity_initial[1] = -0.85 * velocity_initial[1]
-    # if abs(velocity_initial[1]) < 1: 
-    #     velocity_initial[1] = 0
+    #print(collision_time)
 
+# Calculate collision times
 check_collision_at_y_axis()
 
 # Main Loop
@@ -98,5 +114,4 @@ while running:
             pygame.display.flip()
             
             update_variables()
-            #check_collision()
 
