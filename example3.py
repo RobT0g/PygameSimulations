@@ -5,12 +5,12 @@ import math
 pygame.init()
 
 # Customizable Parameters
-starting_pos = [300, 200]
-starting_speed = [-30, -10]
+starting_pos = [0, 300]
+starting_speed = [50, -100]
 gravity_accel = 10
 ground_level = 32
 timeStep = 200
-elasticity_coeficient = 40
+elasticity_coeficient = 10
 
 # Setting screen size
 pixel_size = 32
@@ -76,7 +76,7 @@ def update_variables():
         current_pos[1] = space_initial[1] + velocity_initial[1]*formula_time + (gravity_accel*(formula_time**2))/2
         current_pos[0] = (space_initial[0] + velocity_initial[0]*formula_time)%screen_width
 
-    print([f'{i:.3f}' for i in [*current_pos, formula_time, current_time]])
+    #print([f'{i:.3f}' for i in [*current_pos, formula_time, current_time]])
 
     # Updating speed values
     current_speed[1] = velocity_initial[1] + gravity_accel*formula_time
@@ -90,7 +90,7 @@ def check_collision_at_y_axis():
 
     #print(collision_time)
 
-# Calculate collision times
+# Calculate initial collision
 check_collision_at_y_axis()
 
 # Main Loop
