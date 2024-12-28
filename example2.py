@@ -4,8 +4,8 @@ from pygame.locals import *
 pygame.init()
 
 # Starting Position and Speed
-starting_pos = [300, 200]
-starting_speed = [5, -10]
+starting_pos = 0
+starting_speed = 0
 
 # Setting screen size
 pixel_size = 32
@@ -30,8 +30,8 @@ pygame.time.set_timer(update, refresh)
 # Creating ball
 ball = pygame.Surface((pixel_size, pixel_size), pygame.SRCALPHA)
 pygame.draw.circle(ball, (255, 255, 255), (pixel_size//2, pixel_size//2), pixel_size//2)
-current_pos = starting_pos[:]
-speed = starting_speed[:]
+current_pos = [(screen_width//2) - (pixel_size//2), starting_pos]
+speed = [0, starting_speed]
 
 # Creating Gravity
 gravity_accel = 10 # m/s^2
@@ -62,8 +62,8 @@ while running:
             break
 
         elif e.type == pygame.MOUSEBUTTONDOWN and pygame.mouse.get_pressed()[0]:
-            current_pos = starting_pos[:]
-            speed = starting_speed[:]
+            current_pos = [(screen_width//2) - (pixel_size//2), starting_pos]
+            speed = [0, starting_speed]
             paused = not paused
 
         elif e.type == update:
