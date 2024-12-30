@@ -24,7 +24,7 @@ while running:
             break
         
         elif e.type == pygame.MOUSEBUTTONDOWN and pygame.mouse.get_pressed()[0]:
-            display.blit(ball, [i-pixel_size//2 for i in pygame.mouse.get_pos()])
+            pygame.draw.circle(display, (255, 255, 255), pygame.mouse.get_pos(), pixel_size//2)
             
         elif e.type == pygame.MOUSEBUTTONDOWN and pygame.mouse.get_pressed()[2]:
             pygame.display.flip()

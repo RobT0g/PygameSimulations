@@ -5,12 +5,15 @@ import math
 pygame.init()
 
 # Customizable Parameters
-starting_pos = [0, 300]
-starting_speed = [50, -100]
+starting_pos = [200, 500]
+starting_speed = [-40, -40]
 gravity_accel = 10
 ground_level = 32
 timeStep = 200
-elasticity_coeficient = 10
+elasticity_coeficient = 20
+circle_radius = 16
+show_arrows = True
+arrow_size = 2
 
 # Setting screen size
 pixel_size = 32
@@ -66,26 +69,25 @@ def update_variables():
         space_initial[0] = space_initial[0] + velocity_initial[0]*collision_time
         velocity_initial[0] = (1-elasticity_coeficient/100) * velocity_initial[0]
 
-        space_initial[1] = ground_level-ball.get_size()[1]
+        space_initial[1] = ground_level-circle_radius
         velocity_initial[1] = (-1+elasticity_coeficient/100)*(velocity_initial[1] + gravity_accel*collision_time)
 
-    # Updating ball position
+    # Updating ball position and speed
     if collision_time <= 0.5:
-        current_pos[1] = ground_level-ball.get_size()[0]
+        current_pos[1] = ground_level-circle_radius
+        current_speed = [0, 0]
     else:
         current_pos[1] = space_initial[1] + velocity_initial[1]*formula_time + (gravity_accel*(formula_time**2))/2
         current_pos[0] = (space_initial[0] + velocity_initial[0]*formula_time)%screen_width
-
-    #print([f'{i:.3f}' for i in [*current_pos, formula_time, current_time]])
-
-    # Updating speed values
-    current_speed[1] = velocity_initial[1] + gravity_accel*formula_time
+        current_speed[0] = velocity_initial[0]
+        current_speed[1] = velocity_initial[1] + gravity_accel*formula_time
+    
     check_collision_at_y_axis()
 
 def check_collision_at_y_axis():
     global space_initial, velocity_initial, paused, time_modifier, collision_time
 
-    delta = (4*velocity_initial[1]**2) - 4 * gravity_accel * (2*space_initial[1] - 2*ground_level + 2*ball.get_size()[1])
+    delta = (4*velocity_initial[1]**2) - 4 * gravity_accel * (2*space_initial[1] - 2*ground_level + 2*circle_radius)
     collision_time = (-2*velocity_initial[1] + math.sqrt(delta))/(2*gravity_accel)
 
     #print(collision_time)
@@ -110,7 +112,11 @@ while running:
 
         elif e.type == update:
             display.blit(frame, (0, 0))
-            display.blit(ball, current_pos)
+            #display.blit(ball, current_pos)
+            pygame.draw.circle(display, (255, 255, 255), current_pos, pixel_size//2)
+            if show_arrows:
+                pygame.draw.line(display, (0, 100, 0), current_pos, (current_pos[0]+current_speed[0]*arrow_size, current_pos[1]), 3)
+                pygame.draw.line(display, (0, 100, 0), current_pos, (current_pos[0], current_pos[1]+current_speed[1]*arrow_size), 3)
             pygame.display.flip()
             
             update_variables()
