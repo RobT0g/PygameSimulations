@@ -6,13 +6,13 @@ pygame.init()
 
 # Customizable Parameters
 starting_pos = [200, 500]
-starting_speed = [-40, -40]
+starting_speed = [0, 0]
 gravity_accel = 10
 ground_level = 32
 timeStep = 200
 elasticity_coeficient = 10
 circle_radius = 16
-show_arrows = True
+show_arrows = False
 arrow_size = 2
 
 # Setting screen size
@@ -112,7 +112,6 @@ while running:
 
         elif e.type == update:
             display.blit(frame, (0, 0))
-            #display.blit(ball, current_pos)
             pygame.draw.circle(display, (255, 255, 255), current_pos, pixel_size//2)
             if show_arrows:
                 pygame.draw.line(display, (0, 100, 0), current_pos, (current_pos[0]+current_speed[0]*arrow_size, current_pos[1]), 3)
