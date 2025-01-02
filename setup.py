@@ -20,5 +20,5 @@ while running:
             running = False
             break
             
-        if e.type == KEYDOWN and e.key == K_a:
+        elif e.type == KEYDOWN and e.key == K_a:
             print('A was pressed')

@@ -10,10 +10,6 @@ screen_height = 16*pixel_size
 display = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption('Simulation Example')  
 
-# Creating ball
-ball = pygame.Surface((pixel_size, pixel_size))
-pygame.draw.circle(ball, (255, 255, 255), (pixel_size//2, pixel_size//2), pixel_size//2)
-
 # Main Loop
 running = True
 while running:
